@@ -18,10 +18,10 @@ MAPPLOT
             MOVEM.L D0-D6/A0,-(A7)
 
             MOVE.B  #80,D0
-            MOVE.L  #$00FF0000,D1
+            MOVE.L  #$008C2378,D1
             TRAP    #15
             MOVE.B  #81,D0
-            MOVE.L  #$00AA0000,D1
+            MOVE.L  #$008C2378,D1
             TRAP    #15
 
             LEA     MAPDATA,A0
@@ -66,9 +66,6 @@ MAPDATA     DC.B    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
             DC.B    1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1
             DC.B    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
             
-
-
-
 
 
 *~Font name~Courier New~

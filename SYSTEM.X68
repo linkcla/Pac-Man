@@ -4,8 +4,7 @@
 * Date       : 31/10/2023
 * Description: 
 *-----------------------------------------------------------
-    	    INCLUDE "SYSVARS.X68"
-    	    INCLUDE "CONST.X68"
+
 ; -----------------------------------------------------------------------------
 SYSINIT
 ; INIT SYSTEM: SET SCREEN RESOLUTION AND WINDOWED MODE, CLEAR SCREEN, ENABLE
@@ -38,12 +37,11 @@ SYSINIT
 
             ; INSTALL SCREEN PLOT TRAP
             MOVE.L  #SCRPLOT,($80)
+            
+            ; INSTALL KBD READ TRAP
+            MOVE.L  #KBDREAD,($84)
 
-            ; INSTALL MOUSE READ TRAP
-            ;JSR     MOUINIT
-            ;MOVE.L  #MOUREAD,($80+TRNMREAD*4)
-
-            ;MOVEM.L (A7)+,D0-D1
+            MOVEM.L (A7)+,D0-D1
 
             ; SWITCH TO USER
             MOVE.W  SR,-(A7)
@@ -61,7 +59,7 @@ KBDREAD
             
             MOVEM.L D0-D1,-(A7)
             MOVE.B  #19,D0
-            MOVE.L  #'A'<<24+'S'<<16+'D'<<8+'F',D1
+            MOVE.L  #'W'<<24+'S'<<16+'A'<<8+'D',D1
             TRAP    #15
             MOVE.L  D1,(KBDSTAT)
             MOVEM.L (A7)+,D0-D1
@@ -87,8 +85,10 @@ SCRPLOT
             MOVE.W  #$FF00,D1
             TRAP    #15
 
-            MOVEM.  (A7)+,D0-D1
+            MOVEM.W (A7)+,D0-D1
             RTE
+
+
 
 
 

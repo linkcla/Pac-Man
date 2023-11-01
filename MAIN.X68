@@ -10,13 +10,20 @@
 
     		INCLUDE "SYSTEM.X68"
     		INCLUDE "MAP.X68"
+    		INCLUDE "SCORE.X68"
+    		INCLUDE "CONST.X68"
+            INCLUDE "VARS.X68"
+            INCLUDE "SYSVARS.X68"
     		
     		
 START:
 
 ; --- INITIALIZATION ----------------------------------------------------------
             
+            
+            MOVE.B  #0,D0
             JSR     SYSINIT
+            JSR     SCOINIT     
 LOOP       
 
             
@@ -27,8 +34,11 @@ LOOP
             
 
 ; UPDATE GAME LOGIC
+
         ; PLOT MAP
-        JSR     MAPPLOT   
+        JSR     MAPPLOT
+        ; PLOT SCORE   
+        JSR     SCOPLOT
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
         TRAP    #0
@@ -42,6 +52,8 @@ LOOP
     		;INCLUDE "SYSVARS.X68"
 
     		END    START
+
+
 
 
 
