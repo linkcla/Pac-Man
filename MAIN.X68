@@ -7,13 +7,9 @@
     		
             ORG    $1000
     		
-    		;INCLUDE "CONST.X68"
-    		;INCLUDE "SYSCONST.X68"
+
     		INCLUDE "SYSTEM.X68"
-    		;INCLUDE "SCORE.X68"
-    		;INCLUDE "PACMAN.X68"
-    		;INCLUDE "GHOST.X68"
-    		;INCLUDE "MAP.X68"
+    		INCLUDE "MAP.X68"
     		
     		
 START:
@@ -21,21 +17,24 @@ START:
 ; --- INITIALIZATION ----------------------------------------------------------
             
             JSR     SYSINIT
+LOOP       
 
-.LOOP
-
+            
+            
 ; --- UPDATE ------------------------------------------------------------------
-
+            
 ; READ INPUT DEVICES
             
 
 ; UPDATE GAME LOGIC
-
+        ; PLOT MAP
+        JSR     MAPPLOT   
 ; --- SYNC --------------------------------------------------------------------
-
+        ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
+        TRAP    #0
 ; --- PLOT --------------------------------------------------------------------
-
-            BRA     .LOOP
+            
+            BRA     LOOP
 
     		SIMHALT
     		
@@ -43,6 +42,10 @@ START:
     		;INCLUDE "SYSVARS.X68"
 
     		END    START
+
+
+
+
 
 *~Font name~Courier New~
 *~Font size~18~

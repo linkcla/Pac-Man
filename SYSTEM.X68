@@ -4,7 +4,8 @@
 * Date       : 31/10/2023
 * Description: 
 *-----------------------------------------------------------
-    	
+    	    INCLUDE "SYSVARS.X68"
+    	    INCLUDE "CONST.X68"
 ; -----------------------------------------------------------------------------
 SYSINIT
 ; INIT SYSTEM: SET SCREEN RESOLUTION AND WINDOWED MODE, CLEAR SCREEN, ENABLE
@@ -36,7 +37,7 @@ SYSINIT
             TRAP    #15
 
             ; INSTALL SCREEN PLOT TRAP
-            ;MOVE.L  #SCRPLOT,($80+TRNDBUFF*4)
+            MOVE.L  #SCRPLOT,($80)
 
             ; INSTALL MOUSE READ TRAP
             ;JSR     MOUINIT
@@ -50,7 +51,7 @@ SYSINIT
 
             RTE
             
-; ------------------------------------------------------------------------------
+
 KBDREAD
 ; READS KEYBOARD
 ; INPUT    : NONE
@@ -65,6 +66,30 @@ KBDREAD
             MOVE.L  D1,(KBDSTAT)
             MOVEM.L (A7)+,D0-D1
             RTE
+
+
+
+SCRPLOT
+; TRAP SERVICE ROUTINE TO SWITCH GRAPHIC BUFFERS AND CLEAN HIDDEN BUFFER
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+
+            MOVEM.W D0-D1,-(A7)
+
+            ; SWITCH BUFFERS
+            MOVE.B  #94,D0
+            TRAP    #15
+
+            ; CLEAR HIDDEN BUFFER
+            MOVE.B  #11,D0
+            MOVE.W  #$FF00,D1
+            TRAP    #15
+
+            MOVEM.  (A7)+,D0-D1
+            RTE
+
 
 
 
