@@ -21,7 +21,6 @@ START:
 ; --- INITIALIZATION ----------------------------------------------------------
             
             
-            MOVE.B  #0,D0
             JSR     SYSINIT
             JSR     SCOINIT     
 LOOP       
@@ -52,6 +51,7 @@ LOOP
     		;INCLUDE "SYSVARS.X68"
 
     		END    START
+
 
 
 
