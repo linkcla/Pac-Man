@@ -1,6 +1,6 @@
 from skimage.io import imread
 
-theImage = imread('./Image_parser/pacman-left.png')
+theImage = imread('./Image_parser/clyde.png')
 print(theImage.shape)
 cont = 1
 print('\n        DC.L      ', end="")
