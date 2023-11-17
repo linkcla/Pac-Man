@@ -1,8 +1,9 @@
 from skimage.io import imread
 
-theImage = imread('./Image_parser/PACMAN.png')
+theImage = imread('./Image_parser/pacman-left.png')
 print(theImage.shape)
-cont = 0
+cont = 1
+print('\n        DC.L      ', end="")
 for row in range(theImage.shape[0]):
     for column in range(theImage.shape[1]):
 
@@ -15,7 +16,7 @@ for row in range(theImage.shape[0]):
         else:
             print('$00%.2X%.2X%.2X,'%(blue, green, red), end="")
         if cont % 6 == 0:
-            print('\n DC.L      ', end="")
+            print('\n        DC.L      ', end="")
 
         cont += 1
         
