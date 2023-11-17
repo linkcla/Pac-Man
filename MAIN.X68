@@ -14,6 +14,8 @@
     		INCLUDE "CONST.X68"
             INCLUDE "VARS.X68"
             INCLUDE "SYSVARS.X68"
+            INLCUDE "PACMANS.X68"
+            INCLUDE "GHOSTS.X68"
     		
     		
 START:
@@ -51,6 +53,7 @@ LOOP
     		;INCLUDE "SYSVARS.X68"
 
     		END    START
+
 
 
 
