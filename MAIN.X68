@@ -13,9 +13,11 @@
     		INCLUDE "SCORE.X68"
     		INCLUDE "CONST.X68"
             INCLUDE "VARS.X68"
+            INCLUDE "PACMANS.X68"
             INCLUDE "SYSVARS.X68"
-            INLCUDE "PACMANS.X68"
-            INCLUDE "GHOSTS.X68"
+            ;INCLUDE "GHOSTS.X68"
+            
+            
     		
     		
 START:
@@ -40,6 +42,8 @@ LOOP
         JSR     MAPPLOT
         ; PLOT SCORE   
         JSR     SCOPLOT
+        ; PLOT PACMAN
+        ;JSR     PACPLOT
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
         TRAP    #0
@@ -53,6 +57,9 @@ LOOP
     		;INCLUDE "SYSVARS.X68"
 
     		END    START
+
+
+
 
 
 
