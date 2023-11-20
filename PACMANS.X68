@@ -1,3 +1,41 @@
+; ------------------------------------------------------------------------------
+PACPLOT
+; PLOTS THE PACMAN
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+
+        MOVEM.L     D0-D7/A0,-(A7)
+        LEA         PACU,A0
+        ;D1 = X
+        ;D2 = Y
+        MOVE.W      #0,D2
+        
+.LOOP1  
+        MOVE.W      #0,D1
+.LOOP2  
+        MOVEM.L     D1,-(A7)      
+        MOVE.B      #80,D0
+        MOVE.L      (A0)+,D1
+        TRAP        #15
+        MOVEM.L     (A7)+,D1
+        
+        MOVE.B      #82,D0
+        TRAP        #15      
+        
+        ADDQ.W      #1,D1
+        CMP         #31,D1
+        BLS         .LOOP2
+        ADDQ.W      #1,D2
+        CMP         #31,D2
+        BLS         .LOOP1
+        
+        
+        TRAP        #0
+        MOVEM.L     (A7)+,D0-D7/A0                    
+
+
 ;==============================================================================
 ; ALL PIXEL COLORS OF THE DIFERENT IMAGES OF PACMANS
 ;==============================================================================
