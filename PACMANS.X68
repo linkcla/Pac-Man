@@ -7,13 +7,22 @@ PACPLOT
 ; ------------------------------------------------------------------------------
 
         MOVEM.L     D0-D7/A0,-(A7)
+        ; NECESITAMOS UNA ARRAY CON LOS LEA DE CADA FANTASMA Y DESPUÉS OTRA
+        ; ARRAY EN LA QUE TENEMOS LAS POSICIONES 'X' E 'Y' DE CADA FANTASMA
         LEA         PACU,A0
+        
+        ; PREPARAMOS LAS ITERACIONES DEL BUCLE
+        MOVE.L      (PACPOSX),D3    
+        ADD.L       #31,D3
+        MOVE.L      (PACPOSY),D4
+        ADD.L       #31,D4
+
         ;D1 = X
         ;D2 = Y
-        MOVE.W      #0,D2
+        MOVE.L      (PACPOSY),D2
         
 .LOOP1  
-        MOVE.W      #0,D1
+        MOVE.L      (PACPOSX),D1
 .LOOP2  
         MOVEM.L     D1,-(A7)      
         MOVE.B      #80,D0
@@ -24,17 +33,15 @@ PACPLOT
         MOVE.B      #82,D0
         TRAP        #15      
         
-        ADDQ.W      #1,D1
-        CMP         #31,D1
+        ADDQ.L      #1,D1
+        CMP         D3,D1
         BLS         .LOOP2
-        ADDQ.W      #1,D2
-        CMP         #31,D2
+        ADDQ.L      #1,D2
+        CMP         D4,D2
         BLS         .LOOP1
         
-        
-        TRAP        #0
-        MOVEM.L     (A7)+,D0-D7/A0                    
-
+        MOVEM.L     (A7)+,D0-D7/A0        
+        RTS
 
 ;==============================================================================
 ; ALL PIXEL COLORS OF THE DIFERENT IMAGES OF PACMANS
@@ -903,6 +910,10 @@ PACD    DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000
+
+
+
+
 
 *~Font name~Courier New~
 *~Font size~10~

@@ -15,18 +15,19 @@
             INCLUDE "VARS.X68"
             INCLUDE "PACMANS.X68"
             INCLUDE "SYSVARS.X68"
-            ;INCLUDE "GHOSTS.X68"
+            INCLUDE "GHOSTS.X68"
+            INCLUDE "INIT.X68"
             
             
     		
     		
 START:
 
-; --- INITIALIZATION ----------------------------------------------------------
+; --- INITIALIZATION ----------------------------------------------------------  
+        JSR     SYSINIT
+        JSR     GAMEINIT
+        
             
-            
-            JSR     SYSINIT
-            JSR     SCOINIT     
 LOOP       
 
             
@@ -43,20 +44,27 @@ LOOP
         ; PLOT SCORE   
         JSR     SCOPLOT
         ; PLOT PACMAN
-        ;JSR     PACPLOT
+        JSR     PACPLOT
+        ; PLOT GHOSTS
+        JSR     GHOSTPLOT
+        
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
-        TRAP    #0
+        ;TRAP    #0
 ; --- PLOT --------------------------------------------------------------------
             
             BRA     LOOP
 
     		SIMHALT
-    		
-    		;INCLUDE "VARS.X68"
-    		;INCLUDE "SYSVARS.X68"
 
     		END    START
+
+
+
+
+
+
+
 
 
 
