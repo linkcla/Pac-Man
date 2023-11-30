@@ -14,13 +14,6 @@ PACPOSY     DS.L    1
 
 ; ------ GHOST ADRESS ------
 
-ALLADGH     DC.L    INKI, BLINKY, PINKY, CLYDE
-
-; ---- GHOSTS POSITIONS ----
-
-ALLGPOX     DC.L    INKPOSX, BLIPOSX, PINPOSX, CLYPOSX
-ALLGPOY     DC.L    INKPOSY, BLIPOSY, PINPOSY, CLYPOSY
-
 ; SCARED GHOST
 SCAPOSX     DS.L    1
 SCAPOSY     DS.L    1
@@ -40,6 +33,7 @@ PINPOSY     DS.L    1
 ; CLYDE GHOST
 CLYPOSX     DS.L    1
 CLYPOSY     DS.L    1
+
 
 *~Font name~Courier New~
 *~Font size~18~

@@ -5,53 +5,45 @@ GHOSTPLOT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
+        ; INKI PLOT
+        MOVE.L  A1,-(A7)
+        MOVE.L  (INKPOSY),-(SP)
+        MOVE.L  (INKPOSX),-(SP)
+        MOVE.L  #INKI,-(SP)
+        JSR     SPRAYPL
 
-        MOVEM.L     D0-D5/A0-A3,-(A7)
-        ; PREPARAMOS D5 PARA LLEVAR LA CUENTA DEL BUCLE PARA PINTAR LOS
-        ; 4 FANTASMAS
-        MOVE.L      #3,D5
-        MOVE.L      #ALLADGH,A0
-        MOVE.L      #ALLGPOX,A2
-        MOVE.L      #ALLGPOY,A3
-.LOOP
-        MOVE.L      (A0)+,A0
-        ; PREPARAMOS LAS ITERACIONES DEL BUCLE
-        MOVE.L      (A2)+,A1 
-        MOVE.L      (A1),D3  
-        ADD.L       #31,D3
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
         
-        MOVE.L      (A3)+,A1
-        MOVE.L      (A1),D4
-        ADD.L       #31,D4
+        MOVE.L  (BLIPOSY),-(SP)
+        MOVE.L  (BLIPOSX),-(SP)
+        MOVE.L  #BLINKY,-(SP)
+        JSR     SPRAYPL
+
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
         
-        ;D1 = X
-        ;D2 = Y
-        MOVE.L      D4,D2
-        SUB.L       #31,D2
+        MOVE.L  (PINPOSY),-(SP)
+        MOVE.L  (PINPOSX),-(SP)
+        MOVE.L  #PINKY,-(SP)
+        JSR     SPRAYPL
+
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
         
-.LOOP1  
-        MOVE.L      D3,D1
-        SUB.L       #31,D1
-.LOOP2  
-        MOVEM.L     D1,-(A7)      
-        MOVE.B      #80,D0
-        MOVE.L      (A0)+,D1
-        TRAP        #15
-        MOVEM.L     (A7)+,D1
-        
-        MOVE.B      #82,D0
-        TRAP        #15      
-        
-        ADDQ.L      #1,D1
-        CMP         D3,D1
-        BLS         .LOOP2
-        ADDQ.L      #1,D2
-        CMP         D4,D2
-        BLS         .LOOP1
-        
-        
-        DBRA        D5,.LOOP        
-        MOVEM.L     (A7)+,D0-D5/A0-A3        
+        MOVE.L  (CLYPOSX),-(SP)
+        MOVE.L  (CLYPOSY),-(SP)
+        MOVE.L  #CLYDE,-(SP)
+        JSR     SPRAYPL
+
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+
+        MOVE.L  (A7)+,A1       
         RTS
 
 ;==============================================================================
@@ -922,6 +914,7 @@ CLYDE   DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000
+
 
 
 

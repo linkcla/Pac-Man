@@ -5,42 +5,17 @@ PACPLOT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-
-        MOVEM.L     D0-D7/A0,-(A7)
-        ; NECESITAMOS UNA ARRAY CON LOS LEA DE CADA FANTASMA Y DESPUÉS OTRA
-        ; ARRAY EN LA QUE TENEMOS LAS POSICIONES 'X' E 'Y' DE CADA FANTASMA
-        LEA         PACU,A0
+        MOVE.L  A1,-(A7)
+        MOVE.L  (PACPOSX),-(SP)
+        MOVE.L  (PACPOSY),-(SP)
+        MOVE.L  #PACC,-(SP)
+        JSR     SPRAYPL
         
-        ; PREPARAMOS LAS ITERACIONES DEL BUCLE
-        MOVE.L      (PACPOSX),D3    
-        ADD.L       #31,D3
-        MOVE.L      (PACPOSY),D4
-        ADD.L       #31,D4
-
-        ;D1 = X
-        ;D2 = Y
-        MOVE.L      (PACPOSY),D2
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
         
-.LOOP1  
-        MOVE.L      (PACPOSX),D1
-.LOOP2  
-        MOVEM.L     D1,-(A7)      
-        MOVE.B      #80,D0
-        MOVE.L      (A0)+,D1
-        TRAP        #15
-        MOVEM.L     (A7)+,D1
-        
-        MOVE.B      #82,D0
-        TRAP        #15      
-        
-        ADDQ.L      #1,D1
-        CMP         D3,D1
-        BLS         .LOOP2
-        ADDQ.L      #1,D2
-        CMP         D4,D2
-        BLS         .LOOP1
-        
-        MOVEM.L     (A7)+,D0-D7/A0        
+        MOVE.L  (A7)+,A1       
         RTS
 
 ;==============================================================================

@@ -13,10 +13,12 @@
     		INCLUDE "SCORE.X68"
     		INCLUDE "CONST.X68"
             INCLUDE "VARS.X68"
-            INCLUDE "PACMANS.X68"
-            INCLUDE "SYSVARS.X68"
-            INCLUDE "GHOSTS.X68"
             INCLUDE "INIT.X68"
+            INCLUDE "SYSVARS.X68"
+            INCLUDE "PRINT-SPRITE.X68"
+            INCLUDE "GHOSTS.X68"
+            INCLUDE "PACMANS.X68"
+
             
             
     		
@@ -50,7 +52,7 @@ LOOP
         
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
-        ;TRAP    #0
+        TRAP    #0
 ; --- PLOT --------------------------------------------------------------------
             
             BRA     LOOP
@@ -58,6 +60,8 @@ LOOP
     		SIMHALT
 
     		END    START
+
+
 
 
 

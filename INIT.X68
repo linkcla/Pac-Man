@@ -15,16 +15,16 @@ GAMEINIT
         MOVE.L  #0,(PACPOSX)
         MOVE.L  #0,(PACPOSY)
         MOVE.L  #50,(INKPOSX) 
-        MOVE.L  #0,(INKPOSY)
+        MOVE.L  #50,(INKPOSY)
         MOVE.L  #100,(BLIPOSX) 
-        MOVE.L  #0,(BLIPOSY)
-        MOVE.L  #200,(PINPOSX) 
-        MOVE.L  #0,(PINPOSY)
-        MOVE.L  #300,(CLYPOSX) 
-        MOVE.L  #0,(CLYPOSY)
+        MOVE.L  #100,(BLIPOSY)
+        MOVE.L  #150,(PINPOSX) 
+        MOVE.L  #150,(PINPOSY)
+        MOVE.L  #200,(CLYPOSX) 
+        MOVE.L  #200,(CLYPOSY)
         
         ;MOVEM.L A0-A1,-(A7)
-        ; EL REGISTRO A1 LO USARÉ COMO AUXILIAR 
+        ; EL REGISTRO A1 LO USARï¿½ COMO AUXILIAR 
         
         ; INIT ALLADGH (ALL ADRESS OF GHOSTS)
         ;LEA     ALLADGH,A0
@@ -60,6 +60,7 @@ GAMEINIT
         
         ;MOVEM.L (A7)+,A0-A1
         RTS
+
 
 
 

@@ -33,7 +33,7 @@ SYSINIT
             ; ENABLE DOUBLE BUFFER
             MOVE.B  #92,D0
             MOVE.B  #17,D1
-            ;TRAP    #15
+            TRAP    #15
 
             ; INSTALL SCREEN PLOT TRAP
             MOVE.L  #SCRPLOT,($80)
