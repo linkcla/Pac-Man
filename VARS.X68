@@ -12,6 +12,11 @@ POINTS      DC.L    0
 PACPOSX     DS.L    1
 PACPOSY     DS.L    1
 
+; ------ PACMAN SPEED ------
+
+PACSPED     DS.B    1
+            DS.W    0
+
 ; ------ GHOST ADRESS ------
 
 ; SCARED GHOST

@@ -1,4 +1,16 @@
 ; ------------------------------------------------------------------------------
+PACINIT
+; INIT POSITION OF PACMAN
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+        MOVE.L  #0,(PACPOSX)
+        MOVE.L  #350,(PACPOSY)
+        MOVE.B  #1,(PACSPED)
+        RTS
+
+; ------------------------------------------------------------------------------
 PACPLOT
 ; PLOTS THE PACMAN
 ; INPUT    : NONE
@@ -6,8 +18,11 @@ PACPLOT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
         MOVE.L  A1,-(A7)
-        MOVE.L  (PACPOSX),-(SP)
+        
+        JSR PACUPD
+
         MOVE.L  (PACPOSY),-(SP)
+        MOVE.L  (PACPOSX),-(SP)
         MOVE.L  #PACC,-(SP)
         JSR     SPRAYPL
         
@@ -17,6 +32,20 @@ PACPLOT
         
         MOVE.L  (A7)+,A1       
         RTS
+
+; ------------------------------------------------------------------------------
+PACUPD
+; UPDATE PACMAN POSITION
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+        MOVE.L  D1,-(A7)
+        MOVE.B  (PACSPED),D1
+        ADD.L   D1,(PACPOSX)
+        MOVE.L  (A7)+,D1
+
+        RTS        
 
 ;==============================================================================
 ; ALL PIXEL COLORS OF THE DIFERENT IMAGES OF PACMANS

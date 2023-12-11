@@ -1,5 +1,24 @@
 ; ------------------------------------------------------------------------------
-GHOSTPLOT
+GHINIT
+; INIT THE GHOSTS
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+
+        MOVE.L  #50,(INKPOSX) 
+        MOVE.L  #50,(INKPOSY)
+        MOVE.L  #100,(BLIPOSX) 
+        MOVE.L  #100,(BLIPOSY)
+        MOVE.L  #150,(PINPOSX) 
+        MOVE.L  #150,(PINPOSY)
+        MOVE.L  #200,(CLYPOSX) 
+        MOVE.L  #200,(CLYPOSY)
+
+        RTS
+
+; ------------------------------------------------------------------------------
+GHPLOT
 ; PLOTS THE GHOSTS
 ; INPUT    : NONE
 ; OUTPUT   : NONE
@@ -11,11 +30,11 @@ GHOSTPLOT
         MOVE.L  (INKPOSX),-(SP)
         MOVE.L  #INKI,-(SP)
         JSR     SPRAYPL
-
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
         
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        MOVE.L  (SP)+,A1
+        ; BLINKY PLOT
         MOVE.L  (BLIPOSY),-(SP)
         MOVE.L  (BLIPOSX),-(SP)
         MOVE.L  #BLINKY,-(SP)
@@ -24,7 +43,7 @@ GHOSTPLOT
         MOVE.L  (SP)+,A1
         MOVE.L  (SP)+,A1
         MOVE.L  (SP)+,A1
-        
+        ; PINKY PLOT
         MOVE.L  (PINPOSY),-(SP)
         MOVE.L  (PINPOSX),-(SP)
         MOVE.L  #PINKY,-(SP)
@@ -33,7 +52,7 @@ GHOSTPLOT
         MOVE.L  (SP)+,A1
         MOVE.L  (SP)+,A1
         MOVE.L  (SP)+,A1
-        
+        ; CLYDE PLOT
         MOVE.L  (CLYPOSX),-(SP)
         MOVE.L  (CLYPOSY),-(SP)
         MOVE.L  #CLYDE,-(SP)

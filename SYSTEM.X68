@@ -38,31 +38,60 @@ SYSINIT
             ; INSTALL SCREEN PLOT TRAP
             MOVE.L  #SCRPLOT,($80)
             
+            ; INIT KEYBOARD
+            JSR     KBDINIT
             ; INSTALL KBD READ TRAP
-            MOVE.L  #KBDREAD,($84)
+            MOVE.L  #KBDUPD,($84)
 
             MOVEM.L (A7)+,D0-D1
 
             ; SWITCH TO USER
             MOVE.W  SR,-(A7)
             AND.W   #$DFFF,(A7)
-
-            RTE
             
-
-KBDREAD
-; READS KEYBOARD
+            RTE
+; ------------------------------------------------------------------------------
+KBDINIT           
+; INIT KEYBOARD
 ; INPUT    : NONE
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
             
-            MOVEM.L D0-D1,-(A7)
+            CLR.B   (KBDVAL)
+            RTS
+
+; ------------------------------------------------------------------------------
+KBDUPD           
+; UPDATE KEYBOARD INFOR
+; 7
+; 6
+; 5
+; 4
+; 3 -> DOWN
+; 2 -> RIGHT
+; 1 -> UP
+; 0 -> LEFT
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+            MOVEM.L D0-D3,-(A7)
             MOVE.B  #19,D0
-            MOVE.L  #'W'<<24+'S'<<16+'A'<<8+'D',D1
+            MOVE.L  #KBDDOWN<<24|KBDRIGHT<<16|KBDUP<<8|KBDLEFT,D1
             TRAP    #15
-            MOVE.L  D1,(KBDSTAT)
-            MOVEM.L (A7)+,D0-D1
+
+            ; CONVERT TO DESIRED FORMAT
+            MOVE.W  #3,D3
+.LOOP       LSL.L   #8,D1
+            ROXL.B  #1,D2
+            DBRA.W  D3,.LOOP
+
+            ; STORE KBDVAL
+            MOVE.B  D2,(KBDVAL)
+
+            MOVEM.L (A7)+,D0-D3
+
             RTE
 
 
@@ -87,6 +116,10 @@ SCRPLOT
 
             MOVEM.W (A7)+,D0-D1
             RTE
+
+
+
+
 
 
 

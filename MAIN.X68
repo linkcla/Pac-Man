@@ -37,7 +37,8 @@ LOOP
 ; --- UPDATE ------------------------------------------------------------------
             
 ; READ INPUT DEVICES
-            
+
+        TRAP    #1
 
 ; UPDATE GAME LOGIC
 
@@ -48,7 +49,7 @@ LOOP
         ; PLOT PACMAN
         JSR     PACPLOT
         ; PLOT GHOSTS
-        JSR     GHOSTPLOT
+        JSR     GHPLOT
         
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
@@ -60,6 +61,13 @@ LOOP
     		SIMHALT
 
     		END    START
+
+
+
+
+
+
+
 
 
 

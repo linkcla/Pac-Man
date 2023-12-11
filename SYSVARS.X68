@@ -2,7 +2,10 @@
 ; SYSTEM VARIABLES
 ; ==============================================================================
 
-KBDSTAT     DS.L    1     
+;--- KEYBOARD RELATED VARIABLES ------------------------------------------------
+KBDVAL      DS.B        1       ; KEY STATE
+            DS.W        0
+
 
 
 
