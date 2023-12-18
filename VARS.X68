@@ -15,7 +15,8 @@ PACPOSY     DS.L    1
 ; ------ PACMAN SPEED ------
 
 PACSPED     DS.B    1
-            DS.W    0
+MOVPAC      DS.B    1
+PACSPRI     DS.L    1
 
 ; ------ GHOST ADRESS ------
 

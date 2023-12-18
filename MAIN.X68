@@ -28,8 +28,7 @@ START:
 ; --- INITIALIZATION ----------------------------------------------------------  
         JSR     SYSINIT
         JSR     GAMEINIT
-        
-            
+
 LOOP       
 
             
@@ -49,11 +48,11 @@ LOOP
         ; PLOT PACMAN
         JSR     PACPLOT
         ; PLOT GHOSTS
-        JSR     GHPLOT
+        ;JSR     GHPLOT
         
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
-        TRAP    #0
+        ;TRAP    #0
 ; --- PLOT --------------------------------------------------------------------
             
             BRA     LOOP
@@ -61,6 +60,11 @@ LOOP
     		SIMHALT
 
     		END    START
+
+
+
+
+
 
 
 

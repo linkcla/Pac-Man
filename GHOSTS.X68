@@ -31,36 +31,28 @@ GHPLOT
         MOVE.L  #INKI,-(SP)
         JSR     SPRAYPL
         
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
+        ADD.W   #12,SP
         ; BLINKY PLOT
         MOVE.L  (BLIPOSY),-(SP)
         MOVE.L  (BLIPOSX),-(SP)
         MOVE.L  #BLINKY,-(SP)
         JSR     SPRAYPL
 
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
+        ADD.W   #12,SP
         ; PINKY PLOT
         MOVE.L  (PINPOSY),-(SP)
         MOVE.L  (PINPOSX),-(SP)
         MOVE.L  #PINKY,-(SP)
         JSR     SPRAYPL
 
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
+        ADD.W   #12,SP
         ; CLYDE PLOT
         MOVE.L  (CLYPOSX),-(SP)
         MOVE.L  (CLYPOSY),-(SP)
         MOVE.L  #CLYDE,-(SP)
         JSR     SPRAYPL
 
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
+        ADD.W   #12,SP
 
         MOVE.L  (A7)+,A1       
         RTS

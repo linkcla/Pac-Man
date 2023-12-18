@@ -5,9 +5,11 @@ PACINIT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-        MOVE.L  #0,(PACPOSX)
-        MOVE.L  #350,(PACPOSY)
-        MOVE.B  #1,(PACSPED)
+        MOVE.L  #32,(PACPOSX)
+        MOVE.L  #32,(PACPOSY)
+        MOVE.B  #4,(PACSPED)
+        CLR.B   (MOVPAC)
+        MOVE.L  #PACC,PACSPRI
         RTS
 
 ; ------------------------------------------------------------------------------
@@ -23,12 +25,10 @@ PACPLOT
 
         MOVE.L  (PACPOSY),-(SP)
         MOVE.L  (PACPOSX),-(SP)
-        MOVE.L  #PACC,-(SP)
+        MOVE.L  PACSPRI,-(SP)
         JSR     SPRAYPL
         
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
-        MOVE.L  (SP)+,A1
+        ADD.W   #12,SP
         
         MOVE.L  (A7)+,A1       
         RTS
@@ -40,10 +40,170 @@ PACUPD
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-        MOVE.L  D1,-(A7)
+
+; logica del movimiento
+; variable que indica hacia donde se esta moviendo(MOVPAC):
+;               0 = no se mueve
+;               1 = se mueve hacia la izquierda
+;               2 = se mueve hacia arriba
+;               4 = se mueve hacia la derecha
+;               8 = se mueve hacia abajo
+;
+;
+;               KBD VAL
+;                       8 -> DOWN
+;                       4 -> RIGHT
+;                       2 -> UP
+;                       1 -> LEFT
+; -------------- S1 ---------------------
+; if (posX and posY % 32 == 0)                //X0
+;       if (libre(izq) and (kbdval == 1))     //X1
+;               poner foto izquierda       
+;               move.b  #1,(MOVPAC)        
+;       if (libre(arriba) and (kbdval == 2))  //X2
+;               poner foto arriba
+;               move.b  #2,(MOVPAC)
+;       if (libre(derecha) and (kbdval == 4)) //X3
+;               poner foto derecha
+;               move.b  #4,(MOVPAC)        
+;       if (libre(abajo) and (kbdval == 8))   //X4
+;               poner foto abajo
+;               move.b  #8,(MOVPAC)
+;----------------------------------------
+;
+;-------------- S2 ----------------------
+; if(MOVPAC != 0)
+;       switch(MOVPAC)
+;               case 1: if(libre(izq)) posX-vel  //Si no se cumple se quedará
+;                                                donde esta posX = posX y
+;                                                posY = posY
+;               case 2: if(libre(arriba)) posY-vel
+;               case 4: if(libre(derecha)) posX+vel
+;               case 8: if(libre(abajo)) posY+vel
+;----------------------------------------
+        MOVEM.L D0-D3,-(A7)
+        MOVE.L  D7,-(A7)
+
+        ; OBSERVAMOS CUAL ES EL ESTADO ALREDEDOR DE EL PACMAN
+        MOVE.L  (PACPOSY),-(SP)
+        MOVE.L  (PACPOSX),-(SP)
+        JSR     GETINFO         ; EN D7 TENEMOS LA INFO
+        ADDQ.W  #8,SP
+;       00000000 00FBDRUL       ;LA INFO ESTA DISTRIBUIDA ASÍ DENTRO DE D7
+;       FRUIT: 0000000000100000
+;       BALL:  0000000000010000
+;       DOWN:  0000000000001000
+;       RIGHT: 0000000000000100
+;       UP:    0000000000000010
+;       LEFT:  0000000000000001
+        
+;  CODGIO S1
+        MOVE.L  (PACPOSX),D0
+        AND.L   #$001F,D0
+        BNE     .FINS1          ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32, 
+                                ; ENTONCES SALIMOS DEL IF
+        MOVE.L  (PACPOSY),D0
+        AND.L   #$001F,D0
+        BNE     .FINS1          ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32, 
+                                ; ENTONCES SALIMOS DEL IF
+        ; NOS ENCONTRAMOS DENTRO DEL IF X0
+        MOVE.B  (KBDVAL),D0 
+
+        ; IF X1
+        BTST    #0,D0
+        BEQ     .X2             ; MIRAMOS LA CONDICION (>)
+        BTST    #0,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
+        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        ; DENRTO DEL IF
+        MOVE.L  #PACL,PACSPRI
+        MOVE.B  #1,(MOVPAC)
+
+        BRA     .FINS1
+.X2     ; IF X2
+        BTST    #1,D0
+        BEQ     .X3
+        BTST    #1,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
+        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        ; DENRTO DEL IF
+        MOVE.L  #PACU,PACSPRI
+        MOVE.B  #2,(MOVPAC)
+
+        BRA     .FINS1
+.X3     ; IF X3
+        BTST    #2,D0
+        BEQ     .X4
+        BTST    #2,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
+        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        ; DENRTO DEL IF
+        MOVE.L  #PACR,PACSPRI
+        MOVE.B  #4,(MOVPAC)
+
+        BRA     .FINS1
+.X4     ; IF X4
+        BTST    #3,D0
+        BEQ     .FINS1
+        BTST    #3,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
+        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        ; DENRTO DEL IF
+        MOVE.L  #PACD,PACSPRI
+        MOVE.B  #8,(MOVPAC)
+
+        BRA    .FINS1
+.NOMOV  CLR.B  (MOVPAC)
+.FINS1
+
+; CODIGO S2
+        MOVE.B  (MOVPAC),D0     ; ACTUALIZA FLAG Z
+        BEQ     .END            ; SI NO HAY MOVIMIENTO NO ACTUALIZAMOS LAS POS.
+        
+        ; MOEVMOS LA VELOCIDAD Y LAS POSICIONES A LOS REGISTROS PARA OPERAR
+        CLR.L   D1
         MOVE.B  (PACSPED),D1
-        ADD.L   D1,(PACPOSX)
-        MOVE.L  (A7)+,D1
+        MOVE.L  (PACPOSX),D2
+        MOVE.L  (PACPOSY),D3
+
+
+        ;RECREAMOS EL SWITCH
+        BTST    #0,D0           ;CASE 1
+        BEQ     .CASE2
+        ; DRUL
+        BTST    #0,D7
+        BNE     .END            ; SI HAY PARED NO SE MUEVE
+
+        SUB.W   D1,D2
+        MOVE.L  D2,(PACPOSX)
+        BRA     .END
+        
+.CASE2  BTST    #1,D0           ;CASE 2
+        BEQ     .CASE4
+
+        BTST    #1,D7
+        BNE     .END            ; SI HAY PARED NO SE MUEVE
+
+        SUB.W   D1,D3
+        MOVE.L  D3,(PACPOSY)
+        BRA     .END
+
+.CASE4  BTST    #2,D0           ;CASE 4
+        BEQ     .CASE8
+        BTST    #2,D7
+        BNE     .END            ; SI HAY PARED NO SE MUEVE
+
+        ADD.W   D1,D2
+        MOVE.L  D2,(PACPOSX)
+        BRA     .END
+
+.CASE8  BTST    #3,D0           ;CASE 8
+        BEQ     .END
+        BTST    #3,D7
+        BNE     .END            ; SI HAY PARED NO SE MUEVE
+
+        ADD.W   D1,D3
+        MOVE.L  D3,(PACPOSY)      
+
+.END    MOVE.L  (A7)+,D7
+        MOVEM.L (A7)+,D0-D3
+        
 
         RTS        
 
@@ -914,9 +1074,6 @@ PACD    DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000,$00000000,$00000000
         DC.L      $00000000,$00000000,$00000000,$00000000
-
-
-
 
 
 *~Font name~Courier New~
