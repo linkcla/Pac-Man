@@ -33,12 +33,17 @@ SPRAYPL
         MOVEM.L     D1,-(A7)      
         MOVE.B      #80,D0
         MOVE.L      (A0)+,D1
+        CMP         #$00000000,D1
+        BEQ         .AUX
         TRAP        #15
         MOVEM.L     (A7)+,D1
         
         MOVE.B      #82,D0
-        TRAP        #15      
-        
+        TRAP        #15  
+        BRA        .AUX1
+
+.AUX    MOVEM.L     (A7)+,D1   
+.AUX1    
         ADDQ.L      #1,D1
         CMP         D3,D1
         BLS         .LOOP2
