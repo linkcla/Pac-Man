@@ -57,6 +57,7 @@ PACUPD
 ;                       1 -> LEFT
 ; -------------- S1 ---------------------
 ; if (posX and posY % 32 == 0)                //X0
+;       actualizar informacion alrededor
 ;       if (libre(izq) and (kbdval == 1))     //X1
 ;               poner foto izquierda       
 ;               move.b  #1,(MOVPAC)        
@@ -74,22 +75,19 @@ PACUPD
 ;-------------- S2 ----------------------
 ; if(MOVPAC != 0)
 ;       switch(MOVPAC)
-;               case 1: if(libre(izq)) posX-vel  //Si no se cumple se quedará
+;               case 1:  posX-vel  //Si no se cumple se quedará
 ;                                                donde esta posX = posX y
 ;                                                posY = posY
-;               case 2: if(libre(arriba)) posY-vel
-;               case 4: if(libre(derecha)) posX+vel
-;               case 8: if(libre(abajo)) posY+vel
+;               case 2: posY-vel
+;               case 4: posX+vel
+;               case 8: posY+vel
 ;----------------------------------------
         MOVEM.L D0-D3,-(A7)
         MOVE.L  D7,-(A7)
 
-        ; OBSERVAMOS CUAL ES EL ESTADO ALREDEDOR DE EL PACMAN
-        MOVE.L  (PACPOSY),-(SP)
-        MOVE.L  (PACPOSX),-(SP)
-        JSR     GETINFO         ; EN D7 TENEMOS LA INFO
-        ADDQ.W  #8,SP
-;       00000000 00FBDRUL       ;LA INFO ESTA DISTRIBUIDA ASÍ DENTRO DE D7
+
+; AL HACER EL JSR GETINFO, EN D7 TENEMOS LA INFO EN D7 DE LA SIG. MANERA:
+;  D7 = 00000000 00FBDRUL       
 ;       FRUIT: 0000000000100000
 ;       BALL:  0000000000010000
 ;       DOWN:  0000000000001000
@@ -98,37 +96,44 @@ PACUPD
 ;       LEFT:  0000000000000001
         
 ;  CODGIO S1
-        MOVE.L  (PACPOSX),D0
+.CODS1  MOVE.L  (PACPOSX),D0
         AND.L   #$001F,D0
-        BNE     .FINS1          ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32, 
+        BNE     .CODS2          ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32, 
                                 ; ENTONCES SALIMOS DEL IF
         MOVE.L  (PACPOSY),D0
         AND.L   #$001F,D0
-        BNE     .FINS1          ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32, 
+        BNE     .CODS2          ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32, 
                                 ; ENTONCES SALIMOS DEL IF
         ; NOS ENCONTRAMOS DENTRO DEL IF X0
-        MOVE.B  (KBDVAL),D0 
 
+        ; MIRAMOS LA SITUACION DE LOS ALREDEDORES
+        MOVE.L  (PACPOSY),-(SP)
+        MOVE.L  (PACPOSX),-(SP)
+        JSR     GETINFO         ; EN D7 TENEMOS LA INFO
+        ADDQ.W  #8,SP
+
+
+        MOVE.B  (KBDVAL),D0 
         ; IF X1
         BTST    #0,D0
-        BEQ     .X2             ; MIRAMOS LA CONDICION (>)
+        BEQ     .X2             ; MIRAMOS LA CONDICION 
         BTST    #0,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
         BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
         ; DENRTO DEL IF
         MOVE.L  #PACL,PACSPRI
         MOVE.B  #1,(MOVPAC)
 
-        BRA     .FINS1
+        BRA     .CODS2
 .X2     ; IF X2
         BTST    #1,D0
         BEQ     .X3
         BTST    #1,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        BNE     .CODS2          ; PONEMOS QUE NO SE MUEVA
         ; DENRTO DEL IF
         MOVE.L  #PACU,PACSPRI
         MOVE.B  #2,(MOVPAC)
 
-        BRA     .FINS1
+        BRA     .CODS2
 .X3     ; IF X3
         BTST    #2,D0
         BEQ     .X4
@@ -138,22 +143,21 @@ PACUPD
         MOVE.L  #PACR,PACSPRI
         MOVE.B  #4,(MOVPAC)
 
-        BRA     .FINS1
+        BRA     .CODS2
 .X4     ; IF X4
         BTST    #3,D0
-        BEQ     .FINS1
+        BEQ     .CODS2
         BTST    #3,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
         BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
         ; DENRTO DEL IF
         MOVE.L  #PACD,PACSPRI
         MOVE.B  #8,(MOVPAC)
 
-        BRA    .FINS1
+        BRA    .CODS2
 .NOMOV  CLR.B  (MOVPAC)
-.FINS1
 
 ; CODIGO S2
-        MOVE.B  (MOVPAC),D0     ; ACTUALIZA FLAG Z
+.CODS2  MOVE.B  (MOVPAC),D0     ; ACTUALIZA FLAG Z
         BEQ     .END            ; SI NO HAY MOVIMIENTO NO ACTUALIZAMOS LAS POS.
         
         ; MOEVMOS LA VELOCIDAD Y LAS POSICIONES A LOS REGISTROS PARA OPERAR
