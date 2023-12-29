@@ -48,6 +48,9 @@ SYSINIT
             ; SWITCH TO USER
             MOVE.W  SR,-(A7)
             AND.W   #$DFFF,(A7)
+
+            ; INICILIZE LAST COLOR USED
+            MOVE.L  #$FFFFFFFF,(LASTCOLOR)
             
             RTE
 ; ------------------------------------------------------------------------------

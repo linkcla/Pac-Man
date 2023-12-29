@@ -6,6 +6,7 @@
 KBDVAL      DS.B        1       ; KEY STATE
             DS.W        0
 
+LASTCOLOR   DS.L        1       ; LAST COLOR USED
 
 
 

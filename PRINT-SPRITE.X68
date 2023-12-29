@@ -13,45 +13,55 @@ SPRAYPL
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
 
-        MOVEM.L     D0-D4/A0,-(A7)
+
+; TO DO ------------------------------------------------------------------
+; SI EL COLOR CON EL QUE HEMOS PINTADO EL PIXEL ANTERIOR ES DEL MISMO COLOR CON EL QUE VAMOS A PINTAR EL PIXEL ACTUAL, NO MODIFICAMOS EL COLOR DEL PINCEL
+        MOVEM.L D0-D4/A0,-(A7)
         
-        MOVEA.L     28(SP),A0   ; IMAGEN
+        MOVEA.L 28(SP),A0       ; IMAGEN
         
         ; PREPARAMOS LAS ITERACIONES DEL BUCLE
-        MOVE.L      32(SP),D3   ; XXXXXPOSX
-        ADD.L       #31,D3
-        MOVE.L      36(SP),D4   ; XXXXXPOSY 
-        ADD.L       #31,D4
+        MOVE.L  32(SP),D3       ; XXXXXPOSX
+        ADD.L   #31,D3
+        MOVE.L  36(SP),D4       ; XXXXXPOSY 
+        ADD.L   #31,D4
 
         ;D1 = X
         ;D2 = Y
-        MOVE.L      36(SP),D2   ; XXXXXPOSY 
+        MOVE.L  36(SP),D2       ; XXXXXPOSY 
         
 .LOOP1  
-        MOVE.L      32(SP),D1   ; XXXXXPOSX
+        MOVE.L  32(SP),D1       ; XXXXXPOSX
 .LOOP2  
-        MOVEM.L     D1,-(A7)      
-        MOVE.B      #80,D0
-        MOVE.L      (A0)+,D1
-        CMP         #$00000000,D1
-        BEQ         .AUX
-        TRAP        #15
-        MOVEM.L     (A7)+,D1
+        MOVEM.L D1,-(A7)      
+        MOVE.B  #80,D0
+        MOVE.L  (A0)+,D1
+        CMP     #$00000000,D1
+        BEQ     .AUX1           ; PARA NO PINTAR LOS COLORES EN NEGRO YA QUE
+                                ; EL FONDO ES NEGRO
+        CMP     (LASTCOLOR), D1 ; SI EL PIXEL ANTERIOR LO HEMOS PINTADO DEL 
+                                ; MISMO COLOR QUE EL QUE TENEMOS QUE PINTAR
+                                ; AHORA NOS AHORRAMOS UN TRAP PARA SETEAR EL
+                                ; COLOR DEL PINCEL
+        MOVE.L  D1,(LASTCOLOR)
+        BEQ     .AUX0
+        TRAP    #15
+.AUX0   MOVEM.L (A7)+,D1
         
-        MOVE.B      #82,D0
-        TRAP        #15  
-        BRA        .AUX1
+        MOVE.B  #82,D0
+        TRAP    #15  
+        BRA     .AUX2
 
-.AUX    MOVEM.L     (A7)+,D1   
-.AUX1    
-        ADDQ.L      #1,D1
-        CMP         D3,D1
-        BLS         .LOOP2
-        ADDQ.L      #1,D2
-        CMP         D4,D2
-        BLS         .LOOP1
+.AUX1   MOVEM.L (A7)+,D1   
+.AUX2    
+        ADDQ.L  #1,D1
+        CMP     D3,D1
+        BLS     .LOOP2
+        ADDQ.L  #1,D2
+        CMP     D4,D2
+        BLS     .LOOP1
         
-        MOVEM.L     (A7)+,D0-D4/A0        
+        MOVEM.L (A7)+,D0-D4/A0        
         RTS
 
 
