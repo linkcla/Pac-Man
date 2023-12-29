@@ -18,6 +18,7 @@
             INCLUDE "PRINT-SPRITE.X68"
             INCLUDE "GHOSTS.X68"
             INCLUDE "PACMANS.X68"
+            INCLUDE "MANHATTAN.X68"
 
             
             
@@ -29,10 +30,8 @@ START:
         JSR     SYSINIT
         JSR     GAMEINIT
 
-LOOP       
 
-            
-            
+LOOP                   
 ; --- UPDATE ------------------------------------------------------------------
             
 ; READ INPUT DEVICES
@@ -48,7 +47,7 @@ LOOP
         ; PLOT PACMAN
         JSR     PACPLOT
         ; PLOT GHOSTS
-        ;JSR     GHPLOT
+        JSR     GHPLOT
         
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
@@ -60,6 +59,10 @@ LOOP
     		SIMHALT
 
     		END    START
+
+
+
+
 
 
 
