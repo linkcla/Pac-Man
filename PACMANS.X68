@@ -5,9 +5,9 @@ PACINIT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-        MOVE.L  #32,(PACPOSX)
-        MOVE.L  #32,(PACPOSY)
-        MOVE.B  #4,(PACSPED)
+        MOVE.L  #96,(PACPOSX)
+        MOVE.L  #320,(PACPOSY)
+        MOVE.B  #8,(PACSPED)
         CLR.B   (MOVPAC)
         MOVE.L  #PACC,PACSPRI
         RTS
@@ -118,7 +118,7 @@ PACUPD
         BTST    #0,D0
         BEQ     .X2             ; MIRAMOS LA CONDICION 
         BTST    #0,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        BNE     .CODS2          
         ; DENRTO DEL IF
         MOVE.L  #PACL,PACSPRI
         MOVE.B  #1,(MOVPAC)
@@ -128,7 +128,7 @@ PACUPD
         BTST    #1,D0
         BEQ     .X3
         BTST    #1,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .CODS2          ; PONEMOS QUE NO SE MUEVA
+        BNE     .CODS2          
         ; DENRTO DEL IF
         MOVE.L  #PACU,PACSPRI
         MOVE.B  #2,(MOVPAC)
@@ -138,7 +138,7 @@ PACUPD
         BTST    #2,D0
         BEQ     .X4
         BTST    #2,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        BNE     .CODS2          
         ; DENRTO DEL IF
         MOVE.L  #PACR,PACSPRI
         MOVE.B  #4,(MOVPAC)
@@ -148,13 +148,10 @@ PACUPD
         BTST    #3,D0
         BEQ     .CODS2
         BTST    #3,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .NOMOV          ; PONEMOS QUE NO SE MUEVA
+        BNE     .CODS2          
         ; DENRTO DEL IF
         MOVE.L  #PACD,PACSPRI
         MOVE.B  #8,(MOVPAC)
-
-        BRA    .CODS2
-.NOMOV  CLR.B  (MOVPAC)
 
 ; CODIGO S2
 .CODS2  MOVE.B  (MOVPAC),D0     ; ACTUALIZA FLAG Z

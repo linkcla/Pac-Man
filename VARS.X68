@@ -18,7 +18,11 @@ PACSPED     DS.B    1
 MOVPAC      DS.B    1
 PACSPRI     DS.L    1
 
-; ------ GHOST ADRESS ------
+; --------- GHOST ---------
+; MOVEMENT
+GHSPED      DS.B    1
+MOVGH       DS.B    1       ; LA DIRECCION DEL FANTASMA
+GHOPTM      DS.L    1       ; LA DISTANCIA DEL CAMINO MAS OPTIMO
 
 ; SCARED GHOST
 SCAPOSX     DS.L    1

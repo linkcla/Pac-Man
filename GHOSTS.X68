@@ -5,15 +5,20 @@ GHINIT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
+        MOVE.B  #0,(MOVGH)       
+        MOVE.B  #4,(GHSPED)     
 
-        MOVE.L  #50,(INKPOSX) 
-        MOVE.L  #50,(INKPOSY)
-        MOVE.L  #100,(BLIPOSX) 
-        MOVE.L  #100,(BLIPOSY)
-        MOVE.L  #150,(PINPOSX) 
-        MOVE.L  #150,(PINPOSY)
-        MOVE.L  #200,(CLYPOSX) 
-        MOVE.L  #200,(CLYPOSY)
+        MOVE.L  #32,(INKPOSX) 
+        MOVE.L  #32,(INKPOSY)
+
+        MOVE.L  #576,(BLIPOSX) 
+        MOVE.L  #32,(BLIPOSY)
+
+        MOVE.L  #32,(PINPOSX) 
+        MOVE.L  #416,(PINPOSY)
+
+        MOVE.L  #576,(CLYPOSX) 
+        MOVE.L  #416,(CLYPOSY)
 
         RTS
 
@@ -25,7 +30,12 @@ GHPLOT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
         ; INKI PLOT
-        MOVE.L  A1,-(A7)
+
+        MOVE.L  #INKPOSY,-(SP)
+        MOVE.L  #INKPOSX,-(SP)
+        JSR     GHUPDATE
+        ADDQ.W  #8,SP
+
         MOVE.L  (INKPOSY),-(SP)
         MOVE.L  (INKPOSX),-(SP)
         MOVE.L  #INKI,-(SP)
@@ -33,6 +43,11 @@ GHPLOT
         
         ADD.W   #12,SP
         ; BLINKY PLOT
+        MOVE.L  #BLIPOSY,-(SP)
+        MOVE.L  #BLIPOSX,-(SP)
+        ;JSR     GHUPDATE
+        ADDQ.W  #8,SP
+
         MOVE.L  (BLIPOSY),-(SP)
         MOVE.L  (BLIPOSX),-(SP)
         MOVE.L  #BLINKY,-(SP)
@@ -40,6 +55,11 @@ GHPLOT
 
         ADD.W   #12,SP
         ; PINKY PLOT
+        MOVE.L  #PINPOSY,-(SP)
+        MOVE.L  #PINPOSX,-(SP)
+        ;JSR     GHUPDATE
+        ADDQ.W  #8,SP
+        
         MOVE.L  (PINPOSY),-(SP)
         MOVE.L  (PINPOSX),-(SP)
         MOVE.L  #PINKY,-(SP)
@@ -47,16 +67,171 @@ GHPLOT
 
         ADD.W   #12,SP
         ; CLYDE PLOT
-        MOVE.L  (CLYPOSX),-(SP)
+        MOVE.L  #CLYPOSY,-(SP)
+        MOVE.L  #CLYPOSX,-(SP)
+        ;JSR     GHUPDATE
+        ADDQ.W  #8,SP
+
         MOVE.L  (CLYPOSY),-(SP)
+        MOVE.L  (CLYPOSX),-(SP)
         MOVE.L  #CLYDE,-(SP)
         JSR     SPRAYPL
 
         ADD.W   #12,SP
-
-        MOVE.L  (A7)+,A1       
+      
         RTS
 
+; ------------------------------------------------------------------------------
+GHUPDATE
+; UPDATE MOVMEMENT OF THE GHOST
+; INPUT    : LEA OF POSX AND LEA OF POSY IN SP
+;            FIRST PUSH LEA OF POSY THEN LEA OF POSX
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+
+;       MOVGH SE DISTRIBUYE DE LA SIGUIENTE MANERA:
+;               0 = no se mueve
+;               1 = se mueve hacia la izquierda
+;               2 = se mueve hacia arriba
+;               4 = se mueve hacia la derecha
+;               8 = se mueve hacia abajo
+
+        MOVEM.L D0-D3/A0-A1,-(SP)
+        MOVEM.L D6-D7,-(SP)
+
+        MOVE.L  #$FFFFFFFF,(GHOPTM) 
+
+        MOVE.L  36(SP),A0        ; A0 = LEA OF POSX
+        MOVE.L  40(SP),A1        ; A1 = LEA OF POSY
+        MOVE.L  (A0),D0         ; D0 = POSX
+        AND.L   #$001F,D0
+        BNE     .MOV            ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32 
+        MOVE.L  (A1),D1         ; D1 = POSY
+        AND.L   #$001F,D1
+        BNE     .MOV            ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32
+
+        ; RESTAURAMOS D0 Y D1 PARA USARLO MÁS ADELANTE
+        MOVE.L  (A0),D0         ; D0 = POSX
+        MOVE.L  (A1),D1         ; D1 = POSY
+
+        ; MIRAMOS LA SITUACION DE LOS ALREDEDORES
+        MOVE.L  D1,-(SP)
+        MOVE.L  D0,-(SP)
+        JSR     GETINFO
+        MOVE.L  D7,D6         ; EN D7 TENEMOS LA INFO
+        ADDQ.W  #8,SP
+
+        ;MIRAMOS SI HAY PARED A LA IZQUIERDA
+        BTST    #0,D6
+        BNE     .UP
+        MOVE.B  #1,(MOVGH)
+        SUBQ.L  #1,D0
+        JSR     DIST
+        ADDQ.L  #1,D0           ;RESTAURAMOS POSY(D1)
+        MOVE.L  D7,(GHOPTM)
+
+        ;MIRAMOS SI HAY PARED ARRIBA
+.UP     BTST    #1,D6
+        BNE     .RIGHT
+        SUBQ.L  #1,D1
+        JSR     DIST
+        ADDQ.L  #1,D1           ;RESTAURAMOS POSX(D0)
+        CMP.L   (GHOPTM),D7
+        BHI     .RIGHT          ; SI D7 ES MAYOR NO MODIFICAMOS LA TRAYECTORIA
+                                ; YA QUE LA TRAYECTORIA QUE LLEVA ES LA MAS 
+                                ; ÓPTIMA
+        MOVE.L  D7,(GHOPTM)                      
+        MOVE.B  #2,(MOVGH)
+
+        ;MIRAMOS SI HAY PARED A LA DERECHA
+.RIGHT  BTST    #2,D6
+        BNE     .DOWN
+        ADDQ.L  #1,D0
+        JSR     DIST
+        SUBQ.L  #1,D0           ;RESTAURAMOS POSY(D1)
+        CMP.L   (GHOPTM),D7
+        BHI     .DOWN           ; SI D7 ES MAYOR NO MODIFICAMOS LA TRAYECTORIA
+                                ; YA QUE LA TRAYECTORIA QUE LLEVA ES LA MAS 
+                                ; ÓPTIMA
+        MOVE.L  D7,(GHOPTM)
+        MOVE.B  #4,(MOVGH)
+
+        ;MIRAMOS SI HAY PARED ABAJO
+.DOWN   BTST    #3,D6
+        BNE     .MOV
+        ADDQ.L  #1,D1
+        JSR     DIST
+        SUBQ.L  #1,D1           ;RESTAURAMOS POSX(D0)
+        CMP.L   (GHOPTM),D7
+        BHI     .MOV            ; SI D7 ES MAYOR NO MODIFICAMOS LA TRAYECTORIA
+                                ; YA QUE LA TRAYECTORIA QUE LLEVA ES LA MAS 
+                                ; ÓPTIMA
+        MOVE.B  #8,(MOVGH)
+
+
+        
+
+.MOV    ;CONTINUA EN LA DIRECCION EN LA QUE IBA
+        MOVE.B  (MOVGH),D0      ; IF MOVGH = 0 WE DON'T ACTUALIZE POSX/POSY
+        BEQ     .END
+        
+        CLR.L   D1
+        MOVE.B  (GHSPED),D1
+        MOVE.L  (A0),D2
+        MOVE.L  (A1),D3
+
+        ;RECREAMOS EL SWITCH
+        BTST    #0,D0           ;CASE 1
+        BEQ     .CASE2
+        BTST    #0,D6
+        BNE     .END
+
+        SUB.W   D1,D2
+        MOVE.L  D2,(A0)
+        BRA     .END
+        
+.CASE2  BTST    #1,D0           ;CASE 2
+        BEQ     .CASE4
+        BTST    #1,D6
+        BNE     .END
+
+        SUB.W   D1,D3
+        MOVE.L  D3,(A1)
+        BRA     .END
+
+.CASE4  BTST    #2,D0           ;CASE 4
+        BEQ     .CASE8
+        BTST    #2,D6
+        BNE     .END
+
+        ADD.W   D1,D2
+        MOVE.L  D2,(A0)
+        BRA     .END
+
+.CASE8  BTST    #3,D0           ;CASE 8
+        BEQ     .END
+        BTST    #3,D6
+        BNE     .END 
+        
+        ADD.W   D1,D3
+        MOVE.L  D3,(A1)      
+
+
+.END
+        MOVEM.L (SP)+,D6-D7
+        MOVEM.L (SP)+,D0-D3/A0-A1
+        RTS
+; MOVEM
+        RTS
+
+
+DIST
+        MOVE.L  D1,-(SP)
+        MOVE.L  D0,-(SP)
+        JSR     DISTMANH
+        ADDQ    #8,SP
+        RTS        
 ;==============================================================================
 ; ALL PIXEL COLORS OF THE DIFERENT IMAGES OF GHOSTS
 ;==============================================================================
