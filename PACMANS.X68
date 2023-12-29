@@ -118,40 +118,55 @@ PACUPD
         BTST    #0,D0
         BEQ     .X2             ; MIRAMOS LA CONDICION 
         BTST    #0,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .CODS2          
+        BNE     .BALL          
         ; DENRTO DEL IF
         MOVE.L  #PACL,PACSPRI
         MOVE.B  #1,(MOVPAC)
 
-        BRA     .CODS2
+        BRA     .BALL
 .X2     ; IF X2
         BTST    #1,D0
         BEQ     .X3
         BTST    #1,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .CODS2          
+        BNE     .BALL          
         ; DENRTO DEL IF
         MOVE.L  #PACU,PACSPRI
         MOVE.B  #2,(MOVPAC)
 
-        BRA     .CODS2
+        BRA     .BALL
 .X3     ; IF X3
         BTST    #2,D0
         BEQ     .X4
         BTST    #2,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .CODS2          
+        BNE     .BALL          
         ; DENRTO DEL IF
         MOVE.L  #PACR,PACSPRI
         MOVE.B  #4,(MOVPAC)
 
-        BRA     .CODS2
+        BRA     .BALL
 .X4     ; IF X4
         BTST    #3,D0
-        BEQ     .CODS2
+        BEQ     .BALL
         BTST    #3,D7           ; SI ES 1 HAY PARED Y NO PODEMOS PASAR
-        BNE     .CODS2          
+        BNE     .BALL          
         ; DENRTO DEL IF
         MOVE.L  #PACD,PACSPRI
         MOVE.B  #8,(MOVPAC)
+
+.BALL   ; MIRAMOS SY HAY UNA BOLA EN EL CENTRO
+        BTST    #4,D7   
+        BEQ     .FRUIT
+        ADDQ.W  #1,(POINTS)
+        ; ELIMINAMOS LA BOLA DEL MAPA
+        JSR     CLRBOX
+        BRA     .CODS2
+
+.FRUIT  ; MIRAMOS SI HAY UNA FRUTA EN EL CENTRO
+        BTST    #5,D7   
+        BEQ     .CODS2
+        ADD.W   #10,(POINTS)
+        ; ELIMINAMOS LA FRUTA DEL MAPA
+        JSR     CLRBOX                
 
 ; CODIGO S2
 .CODS2  MOVE.B  (MOVPAC),D0     ; ACTUALIZA FLAG Z
