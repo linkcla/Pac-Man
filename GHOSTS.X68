@@ -38,6 +38,7 @@ GHPLOT
 
         MOVE.L  (INKPOSY),-(SP)
         MOVE.L  (INKPOSX),-(SP)
+        JSR     COLISION
         MOVE.L  #INKI,-(SP)
         JSR     SPRAYPL
         
@@ -50,6 +51,7 @@ GHPLOT
 
         MOVE.L  (BLIPOSY),-(SP)
         MOVE.L  (BLIPOSX),-(SP)
+        JSR     COLISION
         MOVE.L  #BLINKY,-(SP)
         JSR     SPRAYPL
 
@@ -62,6 +64,7 @@ GHPLOT
         
         MOVE.L  (PINPOSY),-(SP)
         MOVE.L  (PINPOSX),-(SP)
+        JSR     COLISION
         MOVE.L  #PINKY,-(SP)
         JSR     SPRAYPL
 
@@ -74,6 +77,7 @@ GHPLOT
 
         MOVE.L  (CLYPOSY),-(SP)
         MOVE.L  (CLYPOSX),-(SP)
+        JSR     COLISION
         MOVE.L  #CLYDE,-(SP)
         JSR     SPRAYPL
 
@@ -231,7 +235,70 @@ DIST
         MOVE.L  D0,-(SP)
         JSR     DISTMANH
         ADDQ    #8,SP
-        RTS        
+        RTS  
+
+; ------------------------------------------------------------------------------
+COLISION
+; CHECK IF THE GHOST SPRITE IS COLLIDING WITH THE PACMAN SPRITE. 
+; INPUT    : POSX AND POSY OF THE GHOST SPRITE THAT WE WANT TO CHECK
+;            FIRST PUSH POSY THEN POSX   
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+;        // Rectángulo 1 con esquina superior izquierda en (x1,y1) ancho w1 y alto h1
+;       // Rectángulo 2 con esquina superior izquierda en (x2,y2) ancho w2 y alto h2
+;       Si ( x1 > x2+w2 ) ==> No hay colisión
+;       Si ( x1+w1 < x2 ) ==> No hay colisión
+;       Si ( y1 > y2+h2 ) ==> No hay colisión
+;       Si ( y1+h1 < y2 ) ==> No hay colisión
+;       En otro caso ==> Hay colisión
+
+        ; HAGO ESTAS SUMAS PARA OBTERNER LAS CORDENADAS X E Y DE LA PARTE DE 
+        ; ABAJO DE LOS SPRITES
+        
+        MOVEM.L D0-D3,-(SP)
+
+        MOVE.L  (PACPOSX),D0
+        MOVE.L  (PACPOSY),D1
+        ADD.L   #TILESIZE,D0
+        ADD.L   #TILESIZE,D1
+
+        MOVE.L  20(SP),D2
+        MOVE.L  24(SP),D3
+        ADD.L   #TILESIZE,D2
+        ADD.L   #TILESIZE,D3
+
+        CMP.L   (PACPOSX),D2
+        BLS     .NOCOL
+        CMP.L   20(SP),D0
+        BLS     .NOCOL
+        CMP.L   (PACPOSY),D3
+        BLS     .NOCOL
+        CMP.L   24(SP),D1
+        BLS     .NOCOL
+        
+        ; SI LLEGA AQUI ES QUE HAY COLISION
+        ; RESTAMOS UNA VIDA Y RESETEAMOS LOS FANTASMAS Y EL PACMAN A SU
+        ; POSICION INICIAL
+        CLR.L   D0
+        MOVE.B  (LIVES),D0
+        SUBQ.B  #1,D0
+        MOVE.B  D0,(LIVES)
+        BNE     .HVELIV
+        ; NO TIENE VIDAS --> ACABAR PARTIDA
+        ; TO DO
+
+
+
+
+.HVELIV
+        JSR     GHINIT
+        JSR     PACINIT
+
+.NOCOL
+        MOVEM.L (SP)+,D0-D3
+        RTS
+
 ;==============================================================================
 ; ALL PIXEL COLORS OF THE DIFERENT IMAGES OF GHOSTS
 ;==============================================================================
