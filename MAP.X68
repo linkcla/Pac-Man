@@ -220,6 +220,39 @@ GETINFO
         RTS
 
 
+; ------------------------------------------------------------------------------
+CLRBOX
+; CLR THE BOX, CALL IT WHEN PACMAN IS IN CORDENATES MULTIPLES OF 32
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+
+        MOVEM.L D0-D1,-(A7)
+
+        MOVE.L  (PACPOSX),D0
+        MOVE.L  (PACPOSY),D1
+
+        ADDQ.L  #1,D0           ; PARA ASEGURARNOS DE ESTAR EN UNA CASILLA
+        ADDQ.L  #1,D1           ; EN REALIDAD NO HARIA FALTA
+
+        DIVU    #TILESIZE,D0     ; ahora necesitamos aplicar una mascara
+        AND.L   #$000000FF,D0   ; ahora tenemos en D0 "column"
+        DIVU    #TILESIZE,D1    ;ahora necesitamos aplicar una mascara
+        AND.L   #$000000FF,D1   ; ahora tenemos en D1 "row"
+
+        MULU.W  #COLUMNS,D1
+        ADD.W   D1,D0
+        MOVEA.L #MAPDAT2,A0
+        ADDA.L  D0,A0
+
+        MOVE.B  #0,(A0)         ; LIMPIAMOS EL CONTENIDO DE LA CASILLA
+
+        MOVEM.L (A7)+,D0-D1
+        
+        RTS
+
+
 ; --- DATA ---------------------------------------------------------------------
 
 MAPDATA     DC.B    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
