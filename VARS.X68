@@ -4,8 +4,9 @@
 
 ; STATS VARS
 
-LIVES       DC.B    3 
-POINTS      DC.L    0
+LIVES       DS.B    1 
+            DS.W    0
+POINTS      DS.W    1
 
 ; ---- PACMAN POSITION ----
 
