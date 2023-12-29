@@ -10,7 +10,7 @@ SCOINIT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
             CLR.W   (POINTS)
-            MOVE.W  #3,(LIVES)
+            MOVE.B  #3,(LIVES)
             RTS
             
 ; ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ SCOPLOT
             ; PRINT SECOND LINE
             LEA     .TXT2,A1
             CLR.L   D1
-            MOVE.W  (LIVES),D1
+            MOVE.B  (LIVES),D1
             MOVE.B  #17,D0
             TRAP    #15
             
