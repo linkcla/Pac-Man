@@ -5,7 +5,11 @@ GHINIT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-        MOVE.B  #0,(MOVGH)       
+        MOVE.B  #0,(MOVGHI)
+        MOVE.B  #0,(MOVGHP)
+        MOVE.B  #0,(MOVGHB)
+        MOVE.B  #0,(MOVGHC)
+
         MOVE.B  #4,(GHSPED)     
 
         MOVE.L  #32,(INKPOSX) 
@@ -30,11 +34,11 @@ GHPLOT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
         ; INKI PLOT
-
+        MOVE.L  #MOVGHI,-(SP)
         MOVE.L  #INKPOSY,-(SP)
         MOVE.L  #INKPOSX,-(SP)
         JSR     GHUPDATE
-        ADDQ.W  #8,SP
+        ADD.W   #12,SP
 
         MOVE.L  (INKPOSY),-(SP)
         MOVE.L  (INKPOSX),-(SP)
@@ -44,10 +48,11 @@ GHPLOT
         
         ADD.W   #12,SP
         ; BLINKY PLOT
+        MOVE.L  #MOVGHB,-(SP)
         MOVE.L  #BLIPOSY,-(SP)
         MOVE.L  #BLIPOSX,-(SP)
-        ;JSR     GHUPDATE
-        ADDQ.W  #8,SP
+        JSR     GHUPDATE
+        ADD.W   #12,SP
 
         MOVE.L  (BLIPOSY),-(SP)
         MOVE.L  (BLIPOSX),-(SP)
@@ -57,10 +62,11 @@ GHPLOT
 
         ADD.W   #12,SP
         ; PINKY PLOT
+        MOVE.L  #MOVGHP,-(SP)
         MOVE.L  #PINPOSY,-(SP)
         MOVE.L  #PINPOSX,-(SP)
-        ;JSR     GHUPDATE
-        ADDQ.W  #8,SP
+        JSR     GHUPDATE
+        ADD.W  #12,SP
         
         MOVE.L  (PINPOSY),-(SP)
         MOVE.L  (PINPOSX),-(SP)
@@ -70,10 +76,11 @@ GHPLOT
 
         ADD.W   #12,SP
         ; CLYDE PLOT
+        MOVE.L  #MOVGHC,-(SP)
         MOVE.L  #CLYPOSY,-(SP)
         MOVE.L  #CLYPOSX,-(SP)
-        ;JSR     GHUPDATE
-        ADDQ.W  #8,SP
+        JSR     GHUPDATE
+        ADD.W   #12,SP
 
         MOVE.L  (CLYPOSY),-(SP)
         MOVE.L  (CLYPOSX),-(SP)
@@ -88,8 +95,8 @@ GHPLOT
 ; ------------------------------------------------------------------------------
 GHUPDATE
 ; UPDATE MOVMEMENT OF THE GHOST
-; INPUT    : LEA OF POSX AND LEA OF POSY IN SP
-;            FIRST PUSH LEA OF POSY THEN LEA OF POSX
+; INPUT    : LEA OF POSX, LEA OF POSY AND LEA OF MOVGHx ON SP
+;            FIRST PUSH LEA OF MOVGHx THEN LEA OF POSY AND THEN LEA OF POSX
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
@@ -101,13 +108,14 @@ GHUPDATE
 ;               4 = se mueve hacia la derecha
 ;               8 = se mueve hacia abajo
 
-        MOVEM.L D0-D3/A0-A1,-(SP)
+        MOVEM.L D0-D3/A0-A2,-(SP)
         MOVEM.L D6-D7,-(SP)
 
         MOVE.L  #$FFFFFFFF,(GHOPTM) 
 
-        MOVE.L  36(SP),A0        ; A0 = LEA OF POSX
-        MOVE.L  40(SP),A1        ; A1 = LEA OF POSY
+        MOVE.L  40(SP),A0        ; A0 = LEA OF POSX
+        MOVE.L  44(SP),A1        ; A1 = LEA OF POSY
+        MOVE.L  48(SP),A2
         MOVE.L  (A0),D0         ; D0 = POSX
         AND.L   #$001F,D0
         BNE     .MOV            ; SI Z=0 SIGNIFICA QUE NO ES MODULO 32 
@@ -129,7 +137,7 @@ GHUPDATE
         ;MIRAMOS SI HAY PARED A LA IZQUIERDA
         BTST    #0,D6
         BNE     .UP
-        MOVE.B  #1,(MOVGH)
+        MOVE.B  #1,(A2)
         SUBQ.L  #1,D0
         JSR     DIST
         ADDQ.L  #1,D0           ;RESTAURAMOS POSY(D1)
@@ -146,7 +154,7 @@ GHUPDATE
                                 ; YA QUE LA TRAYECTORIA QUE LLEVA ES LA MAS 
                                 ; ÓPTIMA
         MOVE.L  D7,(GHOPTM)                      
-        MOVE.B  #2,(MOVGH)
+        MOVE.B  #2,(A2)
 
         ;MIRAMOS SI HAY PARED A LA DERECHA
 .RIGHT  BTST    #2,D6
@@ -159,7 +167,7 @@ GHUPDATE
                                 ; YA QUE LA TRAYECTORIA QUE LLEVA ES LA MAS 
                                 ; ÓPTIMA
         MOVE.L  D7,(GHOPTM)
-        MOVE.B  #4,(MOVGH)
+        MOVE.B  #4,(A2)
 
         ;MIRAMOS SI HAY PARED ABAJO
 .DOWN   BTST    #3,D6
@@ -171,13 +179,13 @@ GHUPDATE
         BHI     .MOV            ; SI D7 ES MAYOR NO MODIFICAMOS LA TRAYECTORIA
                                 ; YA QUE LA TRAYECTORIA QUE LLEVA ES LA MAS 
                                 ; ÓPTIMA
-        MOVE.B  #8,(MOVGH)
+        MOVE.B  #8,(A2)
 
 
         
 
 .MOV    ;CONTINUA EN LA DIRECCION EN LA QUE IBA
-        MOVE.B  (MOVGH),D0      ; IF MOVGH = 0 WE DON'T ACTUALIZE POSX/POSY
+        MOVE.B  (A2),D0      ; IF A2 = 0 WE DON'T ACTUALIZE POSX/POSY
         BEQ     .END
         
         CLR.L   D1
@@ -224,7 +232,7 @@ GHUPDATE
 
 .END
         MOVEM.L (SP)+,D6-D7
-        MOVEM.L (SP)+,D0-D3/A0-A1
+        MOVEM.L (SP)+,D0-D3/A0-A2
         RTS
 ; MOVEM
         RTS
