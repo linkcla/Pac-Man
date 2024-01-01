@@ -293,12 +293,8 @@ COLISION
         SUBQ.B  #1,D0
         MOVE.B  D0,(LIVES)
         BNE     .HVELIV
-        ; NO TIENE VIDAS --> ACABAR PARTIDA
-        ; TO DO
-
-
-
-
+        ; SI LLEGA AQUÍ ES QUE NO TIENE VIDAS
+        JSR     LOSS
 .HVELIV
         JSR     GHINIT
         JSR     PACINIT
