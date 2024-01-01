@@ -217,7 +217,13 @@ PACUPD
         ADD.W   D1,D3
         MOVE.L  D3,(PACPOSY)      
 
-.END    MOVE.L  (A7)+,D7
+.END    
+        MOVE.W  (POINTS),D0
+        CMP     #192,D0         ; LOS PUNTOS TOTALES DISPONIBLES EN EL MAPA
+        BNE     .AUX            ; SI NO SE HAN RECOLECTADO 192pts NO HA GANADO
+        JSR     WIN
+
+.AUX    MOVE.L  (A7)+,D7
         MOVEM.L (A7)+,D0-D3
         
 
