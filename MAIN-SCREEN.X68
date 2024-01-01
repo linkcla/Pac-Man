@@ -27,7 +27,7 @@ STARTSCR
         
         ; IMPRIMIR TEXTO
         MOVE.B  #14,D0
-        LEA     TEXT,A1
+        LEA     .TEXT,A1
         TRAP    #15
 
         ; RESETEAR LAS PROPIEDADES DE LA FUENTE
@@ -49,7 +49,7 @@ STARTSCR
 .END    MOVEM.L (A7)+,D0-D2/A1      
         RTS
 
-TEXT   DC.B    'APRIETA LA FLECHA DERECHA PARA EMPEZAR',0
+.TEXT  DC.B    'APRIETA LA FLECHA DERECHA PARA EMPEZAR',0
        DC.B     0                 
 
 
