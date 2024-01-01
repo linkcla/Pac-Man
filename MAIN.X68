@@ -19,6 +19,9 @@
             INCLUDE "GHOSTS.X68"
             INCLUDE "PACMANS.X68"
             INCLUDE "MANHATTAN.X68"
+            INCLUDE "MAIN-SCREEN.X68"
+            INCLUDE "LOGO.X68"
+            INCLUDE "PRINT-LOGO.X68"
 
             
             
@@ -29,7 +32,8 @@ START:
 ; --- INITIALIZATION ----------------------------------------------------------  
         JSR     SYSINIT
         JSR     GAMEINIT
-
+        JSR     STARTSCR
+        JSR     DBUFF       ; ENABLE DOUBLE BUFFER
 
 LOOP                   
 ; --- UPDATE ------------------------------------------------------------------
@@ -59,6 +63,8 @@ LOOP
     		SIMHALT
 
     		END    START
+
+
 
 
 

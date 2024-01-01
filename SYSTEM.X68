@@ -30,11 +30,6 @@ SYSINIT
             MOVE.W  #$FF00,D1
             TRAP    #15
 
-            ; ENABLE DOUBLE BUFFER
-            MOVE.B  #92,D0
-            MOVE.B  #17,D1
-            TRAP    #15
-
             ; INSTALL SCREEN PLOT TRAP
             MOVE.L  #SCRPLOT,($80)
             
@@ -53,6 +48,20 @@ SYSINIT
             MOVE.L  #$FFFFFFFF,(LASTCOLOR)
             
             RTE
+; ------------------------------------------------------------------------------
+DBUFF           
+; ENABLE DOUBLE BUFFER
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+
+            MOVE.B  #92,D0
+            MOVE.B  #17,D1
+            TRAP    #15
+
+
+            RTS  
 ; ------------------------------------------------------------------------------
 KBDINIT           
 ; INIT KEYBOARD
