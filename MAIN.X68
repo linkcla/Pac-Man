@@ -20,7 +20,6 @@
             INCLUDE "PACMANS.X68"
             INCLUDE "MANHATTAN.X68"
             INCLUDE "MAIN-SCREEN.X68"
-            INCLUDE "LOGO.X68"
             INCLUDE "PRINT-LOGO.X68"
             INCLUDE "WIN-SCREEN.X68"
             INCLUDE "LOSS-SCREEN.X68"
@@ -46,6 +45,12 @@ LOOP
 
 ; UPDATE GAME LOGIC
 
+        JSR     PACUPD
+        JSR     GHUPDATE
+
+
+; --- PLOT --------------------------------------------------------------------
+
         ; PLOT MAP
         JSR     MAPPLOT
         ; PLOT SCORE   
@@ -58,9 +63,9 @@ LOOP
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
         TRAP    #0
-; --- PLOT --------------------------------------------------------------------
+
             
-            BRA     LOOP
+        BRA     LOOP
 END
     		SIMHALT
 
