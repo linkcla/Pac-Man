@@ -20,8 +20,6 @@ PACPLOT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
         MOVE.L  A1,-(A7)
-        
-        JSR PACUPD
 
         MOVE.L  (PACPOSY),-(SP)
         MOVE.L  (PACPOSX),-(SP)
