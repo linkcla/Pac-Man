@@ -33,67 +33,76 @@ GHPLOT
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
-        ; INKI PLOT
-        MOVE.L  #MOVGHI,-(SP)
-        MOVE.L  #INKPOSY,-(SP)
-        MOVE.L  #INKPOSX,-(SP)
-        JSR     GHUPDATE
-        ADD.W   #12,SP
-
+               ; INKI PLOT
         MOVE.L  (INKPOSY),-(SP)
         MOVE.L  (INKPOSX),-(SP)
-        JSR     COLISION
         MOVE.L  #INKI,-(SP)
         JSR     SPRAYPL
-        
-        ADD.W   #12,SP
-        ; BLINKY PLOT
-        MOVE.L  #MOVGHB,-(SP)
-        MOVE.L  #BLIPOSY,-(SP)
-        MOVE.L  #BLIPOSX,-(SP)
-        JSR     GHUPDATE
         ADD.W   #12,SP
 
+        ; BLINKY PLOT
         MOVE.L  (BLIPOSY),-(SP)
         MOVE.L  (BLIPOSX),-(SP)
-        JSR     COLISION
         MOVE.L  #BLINKY,-(SP)
         JSR     SPRAYPL
-
         ADD.W   #12,SP
+
         ; PINKY PLOT
-        MOVE.L  #MOVGHP,-(SP)
-        MOVE.L  #PINPOSY,-(SP)
-        MOVE.L  #PINPOSX,-(SP)
-        JSR     GHUPDATE
-        ADD.W  #12,SP
-        
         MOVE.L  (PINPOSY),-(SP)
         MOVE.L  (PINPOSX),-(SP)
-        JSR     COLISION
         MOVE.L  #PINKY,-(SP)
         JSR     SPRAYPL
-
         ADD.W   #12,SP
+
         ; CLYDE PLOT
-        MOVE.L  #MOVGHC,-(SP)
-        MOVE.L  #CLYPOSY,-(SP)
-        MOVE.L  #CLYPOSX,-(SP)
-        JSR     GHUPDATE
-        ADD.W   #12,SP
-
         MOVE.L  (CLYPOSY),-(SP)
         MOVE.L  (CLYPOSX),-(SP)
-        JSR     COLISION
         MOVE.L  #CLYDE,-(SP)
         JSR     SPRAYPL
-
         ADD.W   #12,SP
       
         RTS
 
+
 ; ------------------------------------------------------------------------------
 GHUPDATE
+; UPDATE ALL THE GHOSTS
+; INPUT    : NONE
+; OUTPUT   : NONE
+; MODIFIES : NONE
+; ------------------------------------------------------------------------------
+        ; INKI UPDATE
+        MOVE.L  #MOVGHI,-(SP)
+        MOVE.L  #INKPOSY,-(SP)
+        MOVE.L  #INKPOSX,-(SP)
+        JSR     GHUPD
+        ADD.W   #12,SP
+
+        ; BLINKY UPDATE
+        MOVE.L  #MOVGHB,-(SP)
+        MOVE.L  #BLIPOSY,-(SP)
+        MOVE.L  #BLIPOSX,-(SP)
+        JSR     GHUPD
+        ADD.W   #12,SP
+
+        ; PINKY UPDATE
+        MOVE.L  #MOVGHP,-(SP)
+        MOVE.L  #PINPOSY,-(SP)
+        MOVE.L  #PINPOSX,-(SP)
+        JSR     GHUPD
+        ADD.W  #12,SP
+
+        ; CLYDE UPDATE
+        MOVE.L  #MOVGHC,-(SP)
+        MOVE.L  #CLYPOSY,-(SP)
+        MOVE.L  #CLYPOSX,-(SP)
+        JSR     GHUPD
+        ADD.W   #12,SP
+
+        RTS
+
+; ------------------------------------------------------------------------------
+GHUPD
 ; UPDATE MOVMEMENT OF THE GHOST
 ; INPUT    : LEA OF POSX, LEA OF POSY AND LEA OF MOVGHx ON SP
 ;            FIRST PUSH LEA OF MOVGHx THEN LEA OF POSY AND THEN LEA OF POSX
@@ -231,10 +240,13 @@ GHUPDATE
 
 
 .END
+        MOVE.L  (A1),-(SP)
+        MOVE.L  (A0),-(SP)
+        JSR     COLISION
+        ADDQ    #8,SP
+
         MOVEM.L (SP)+,D6-D7
         MOVEM.L (SP)+,D0-D3/A0-A2
-        RTS
-; MOVEM
         RTS
 
 
