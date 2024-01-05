@@ -134,15 +134,6 @@ GETINFO
 ; en este caso:
 ;        -row = POSY/ROWS
 ;        -column = POSX/COLUMNS
-;
-; izq --> ((row) * COLUMNS + column) - 1
-; arriba --> ((row) * COLUMNS + column) - COLUMNS
-; derecha --> ((row) * COLUMNS + column) + 1
-; abajo --> ((row) * COLUMNS + column) + COLUMNS
-; centro --> ((row) * COLUMNS + column)
-; si el valor no esta entre 0 y 1024 poner 0 //este caso sucedera en
-; el momento que el pacman quiera ir por el tunel que cruza de lado
-; a lado.
         
         MOVEM.L D0-D2/A0,-(A7)
         CLR.L   D2
