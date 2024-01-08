@@ -1,10 +1,16 @@
 ; ------------------------------------------------------------------------------
 STARTSCR
-; UPDATE PACMAN POSITION
+; MUESTRA LA PANTALLA DE INICIO
 ; INPUT    : NONE
 ; OUTPUT   : NONE
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
+
+        ;INICIAMOS LA MUSICA DE LA PANTALLA DEINICIO
+        MOVE.L  #1,-(SP)
+        MOVE.W  #0,-(SP)
+        JSR     SOUNDPL
+        ADDQ    #6,SP
 
         MOVE.L  #120,-(SP)
         MOVE.L  #170,-(SP)
@@ -46,7 +52,16 @@ STARTSCR
 
         BRA     .LOOP
 
-.END    
+.END  
+        ; START TIME
+        JSR     CLKSTART
+
+        ; END MUSIC
+        MOVE.L  #2,-(SP)
+        MOVE.W  #0,-(SP)
+        JSR     SOUNDPL
+        ADDQ    #6,SP
+
         ; CLEAR SCREEN
         MOVE.B  #11,D0
         MOVE.W  #$FF00,D1

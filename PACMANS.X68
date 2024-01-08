@@ -154,18 +154,34 @@ PACUPD
 .BALL   ; MIRAMOS SY HAY UNA BOLA EN EL CENTRO
         BTST    #4,D7   
         BEQ     .FRUIT
+
         ADDQ.W  #1,(POINTS)
+        
         ; ELIMINAMOS LA BOLA DEL MAPA
         JSR     CLRBOX
+        
+        ; REPRODUCIMOS EL SONIDO
+        MOVE.L  #0,-(SP)
+        MOVE.W  #1,-(SP)
+        JSR     SOUNDPL
+        ADDQ    #6,SP
+        
         BRA     .CODS2
 
 .FRUIT  ; MIRAMOS SI HAY UNA FRUTA EN EL CENTRO
         BTST    #5,D7   
         BEQ     .CODS2
+        
         ADD.W   #10,(POINTS)
+        
         ; ELIMINAMOS LA FRUTA DEL MAPA
         JSR     CLRBOX                
-
+        ; REPRODUCIMOS EL SONIDO
+        MOVE.L  #0,-(SP)
+        MOVE.W  #2,-(SP)
+        JSR     SOUNDPL
+        ADDQ    #6,SP
+        
 ; CODIGO S2
 .CODS2  MOVE.B  (MOVPAC),D0     ; ACTUALIZA FLAG Z
         BEQ     .END            ; SI NO HAY MOVIMIENTO NO ACTUALIZAMOS LAS POS.
@@ -219,6 +235,8 @@ PACUPD
         MOVE.W  (POINTS),D0
         CMP     #192,D0         ; LOS PUNTOS TOTALES DISPONIBLES EN EL MAPA
         BNE     .AUX            ; SI NO SE HAN RECOLECTADO 192pts NO HA GANADO
+        JSR     CLKSTOP
+        JSR     SAVETIME
         JSR     WIN
 
 .AUX    MOVE.L  (A7)+,D7

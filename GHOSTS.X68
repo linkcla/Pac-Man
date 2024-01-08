@@ -298,12 +298,19 @@ COLISION
         BLS     .NOCOL
         
         ; SI LLEGA AQUI ES QUE HAY COLISION
+        ; REPRODUCIMOS EL SONIDO
+        MOVE.L  #0,-(SP)
+        MOVE.W  #3,-(SP)
+        JSR     SOUNDPL
+        ADDQ    #6,SP
+        
         ; RESTAMOS UNA VIDA Y RESETEAMOS LOS FANTASMAS Y EL PACMAN A SU
         ; POSICION INICIAL
         CLR.L   D0
         MOVE.B  (LIVES),D0
         SUBQ.B  #1,D0
         MOVE.B  D0,(LIVES)
+        
         BNE     .HVELIV
         ; SI LLEGA AQUÍ ES QUE NO TIENE VIDAS
         JSR     LOSS

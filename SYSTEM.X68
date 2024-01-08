@@ -37,6 +37,9 @@ SYSINIT
             JSR     KBDINIT
             ; INSTALL KBD READ TRAP
             MOVE.L  #KBDUPD,($84)
+            
+            ; INICILIZE LAST COLOR USED
+            MOVE.L  #$FFFFFFFF,(LASTCOLOR)
 
             MOVEM.L (A7)+,D0-D1
 
@@ -44,8 +47,6 @@ SYSINIT
             MOVE.W  SR,-(A7)
             AND.W   #$DFFF,(A7)
 
-            ; INICILIZE LAST COLOR USED
-            MOVE.L  #$FFFFFFFF,(LASTCOLOR)
             
             RTE
 ; ------------------------------------------------------------------------------

@@ -5,8 +5,15 @@
 ; STATS VARS
 
 LIVES       DS.B    1 
-            DS.W    0
+            DS.W    1
 POINTS      DS.W    1
+
+; ---- CLOCK RELATED VARIABLES ----
+
+STARTTIME   DS.L    1
+STOPTIME    DS.L    1
+TIMEPLAYED  DS.L    1
+RECRDTIME   DS.L    1
 
 ; ---- PACMAN POSITION ----
 
@@ -26,7 +33,7 @@ MOVGHI      DS.B    1       ; LA DIRECCION DEL FANTASMA INKI
 MOVGHB      DS.B    1       ; LA DIRECCION DEL FANTASMA BLINKY
 MOVGHP      DS.B    1       ; LA DIRECCION DEL FANTASMA PINKY
 MOVGHC      DS.B    1       ; LA DIRECCION DEL FANTASMA CLYDE
-            DS.W    0
+            DS.W    1
 GHOPTM      DS.L    1       ; LA DISTANCIA DEL CAMINO MAS OPTIMO
 
 ; SCARED GHOST

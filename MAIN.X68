@@ -23,6 +23,8 @@
             INCLUDE "PRINT-LOGO.X68"
             INCLUDE "WIN-SCREEN.X68"
             INCLUDE "LOSS-SCREEN.X68"
+            INCLUDE "TIMER.X68"
+            INCLUDE "SOUND-MANAGER.X68"
 
             
             
@@ -31,10 +33,12 @@
 START:
 
 ; --- INITIALIZATION ----------------------------------------------------------  
+
         JSR     SYSINIT
         JSR     GAMEINIT
         JSR     STARTSCR
         JSR     DBUFF       ; ENABLE DOUBLE BUFFER
+
 
 LOOP                   
 ; --- UPDATE ------------------------------------------------------------------
@@ -55,6 +59,8 @@ LOOP
         JSR     MAPPLOT
         ; PLOT SCORE   
         JSR     SCOPLOT
+        ; PLOT CLOCK
+        JSR     CLKPLOT
         ; PLOT PACMAN
         JSR     PACPLOT
         ; PLOT GHOSTS
@@ -63,13 +69,18 @@ LOOP
 ; --- SYNC --------------------------------------------------------------------
         ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER    
         TRAP    #0
-
-            
+   
         BRA     LOOP
-END
+END 
     		SIMHALT
 
     		END    START
+
+
+
+
+
+
 
 
 

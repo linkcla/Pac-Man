@@ -10,9 +10,12 @@ GAMEINIT
 ; MODIFIES : NONE
 ; ------------------------------------------------------------------------------
 
+        JSR     CLKINIT
+        JSR     SOUNDLD
         JSR     SCOINIT
         JSR     PACINIT
         JSR     GHINIT
+
         RTS
 
 

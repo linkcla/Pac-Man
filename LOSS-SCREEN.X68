@@ -8,7 +8,7 @@ LOSS
         MOVEM.L D0-D2/A1,-(A7)
 
         ; CONFIGURAR LAS PROPIEDADES DE LA FUENTE
-.LOOP   MOVE.B  #21,D0
+        MOVE.B  #21,D0
         MOVE.L  #$00FFFFFF,D1
         MOVE.L  #$020F0001,D2
         TRAP    #15
@@ -25,7 +25,7 @@ LOSS
         TRAP    #15
         
         TRAP    #0          ; DOBLE BUFFER AND CLEAR HIDDEN BUFFER
-        DBRA    D1,.LOOP 
+        
         BRA     END
 
         MOVEM.L (A7)+,D0-D2/A1      
