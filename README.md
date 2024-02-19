@@ -1,12 +1,12 @@
 # Pac Man
 
-##Como jugar:
+## Como jugar:
 Al iniciar el juego nos encontramos con la pantalla de inicio, una vez queramos jugar apretaremos la flecha derecha para iniciar el juego. 
 Una vez iniciado podremos mover el Pac-Man con las flechas del teclado. El objetivo del juego es conseguir tomar todas las frutas y todas las pelotitas que están repartidas por el mapa antes de morir 3 veces a manos de los fantasmas. Para ello habrá que ir esquivando los cuatro fantasmas. 
 Tanto si ganas consiguiendo todos los puntos como si pierdes porque te han matado 3 veces te llevará a una pantalla final indicándote si has ganado o perdido. Al llegar a esta pantalla el juego se acaba. 
 Si se quiere volver a jugar una partida nueva se deberá cerra la ventana de ejecución de Easy68K y volver a compilar.
 
-##Estructura del código:
+## Estructura del código:
 ###Archivos con los que nos encontramos:
 - **MAIN.X68**
 En este archivo encontramos el main del juego donde está el game-loop y la llamada a la inicialización del sistema, del juego y el plot de la pantalla inicial (MAIN-SCREEN) además de llamar al TRAP #1(lectura del input del teclado) y al TRAP #0 encargado de cambiar el buffer y limpiar el buffer escondido.
