@@ -7,7 +7,7 @@ Tanto si ganas consiguiendo todos los puntos como si pierdes porque te han matad
 Si se quiere volver a jugar una partida nueva se deberá cerra la ventana de ejecución de Easy68K y volver a compilar.
 
 ## Estructura del código:
-###Archivos con los que nos encontramos:
+### Archivos con los que nos encontramos:
 - **MAIN.X68**
 En este archivo encontramos el main del juego donde está el game-loop y la llamada a la inicialización del sistema, del juego y el plot de la pantalla inicial (MAIN-SCREEN) además de llamar al TRAP #1(lectura del input del teclado) y al TRAP #0 encargado de cambiar el buffer y limpiar el buffer escondido.
 
