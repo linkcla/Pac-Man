@@ -99,7 +99,7 @@ Para optimizar un poco este subprograma hacemos dos cosas:
 -	Si el pixel es negro no lo pintamos ya que los pasillos por dónde van los fantasmas son negros.
 -	Si el pixel que vamos a pintar ahora es del mismo color que el anterior no volvemos a setear el color del pincel, de esta forma cada vez que pintemos el pixel del mismo color que el pixel anterior nos ahorramos un TRAP #80.
 
-##Uso de ficheros.
+## Uso de ficheros.
 Hemos implementado esta característica adicional para guardar cual ha sido el récord de tiempo en pasarnos el juego. Esta característica está implementada dentro del archivo TIMER.X68 con el uso de las tareas #50, #51, #52, #53 y #54. La implementación consiste en lo siguiente:
 
 - Primero de todo cuando se inicia la partida leo el archivo con el nombre FILENAME mediante la tarea #51, si el fichero no está creado el TRAP me devuelve en D0 un 2 indicando que ha habido un error. En el caso de que ocurra el error uso la tarea #52 para abrir el fichero con el nombre FILENAME, la diferencia es que si no existe crea un fichero nuevo con ese nombre y si existe lo machaca.
